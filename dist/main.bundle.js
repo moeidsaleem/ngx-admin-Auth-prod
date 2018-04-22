@@ -2453,7 +2453,7 @@ var AwsService = /** @class */ (function () {
         this._http = _http;
         this.api = api;
         /************ RESOURCE IDENTIFIERS *************/
-        this.googleId = '968100487080-cta7k8fstmgic784k6jgb8l3a6jjilij.apps.googleusercontent.com';
+        this.googleId = '873878796815-mm6qi366rdhimkbm6a3e0npkehhqjljl.apps.googleusercontent.com';
         this.poolData = {
             UserPoolId: 'us-east-2_NPxxzC6O4',
             ClientId: '2ifc0t63fe4qer131f4gvj57mo',
@@ -2830,8 +2830,9 @@ var GoogleSigninComponent = /** @class */ (function () {
         this.awsService = awsService;
         this.api = api;
         this.router = router;
-        //private clientId:string = '738519485992-fte4vuk3jeu03mme7lr93i69htgluq1e.apps.googleusercontent.com';
-        this.clientId = this.awsService.googleId;
+        this.clientId = '873878796815-mm6qi366rdhimkbm6a3e0npkehhqjljl.apps.googleusercontent.com';
+        //secret='qZ9ETCODnJ3WCqXGcBaJFELN'
+        // clientId:string = this.awsService.googleId;
         this.scope = [
             'profile',
             'email',
@@ -2963,7 +2964,7 @@ var MyauthComponent = /** @class */ (function () {
         this.chosenProvider = "cup";
         this.subscribeToisInitialized();
         var initParams = {
-            appId: '16102498426312551610249842631255',
+            appId: '218290731851762',
             xfbml: true,
             version: 'v2.8'
         };
@@ -2991,6 +2992,7 @@ var MyauthComponent = /** @class */ (function () {
             .then(function (response) {
             _this.api.isLoggedIn = true;
             console.log(response);
+            _this.api.loggedIn();
             _this.router.navigate(['pages/ui-features/buttons']);
         })
             .catch(function (error) { return console.error(error); });
