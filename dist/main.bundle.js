@@ -2174,6 +2174,7 @@ var ThemeModule = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__newlogin_myauth_myauth_component__ = __webpack_require__("../../../../../src/app/newlogin/myauth/myauth.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__newlogin_newlogin_component__ = __webpack_require__("../../../../../src/app/newlogin/newlogin.component.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__newlogin_myauth_signup_signup_component__ = __webpack_require__("../../../../../src/app/newlogin/myauth/signup/signup.component.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__newlogin_auth_guard__ = __webpack_require__("../../../../../src/app/newlogin/auth.guard.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2185,8 +2186,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
 var routes = [
-    { path: 'pages', loadChildren: 'app/pages/pages.module#PagesModule' },
+    { path: 'pages', loadChildren: 'app/pages/pages.module#PagesModule', canActivate: [__WEBPACK_IMPORTED_MODULE_5__newlogin_auth_guard__["a" /* AuthGuard */]] },
     {
         path: 'newlogin',
         component: __WEBPACK_IMPORTED_MODULE_3__newlogin_newlogin_component__["a" /* NewloginComponent */],
@@ -2207,9 +2209,9 @@ var routes = [
             },
         ],
     },
-    { path: 'signup', component: __WEBPACK_IMPORTED_MODULE_4__newlogin_myauth_signup_signup_component__["a" /* SignupComponent */] },
+    { path: 'signup', component: __WEBPACK_IMPORTED_MODULE_4__newlogin_myauth_signup_signup_component__["a" /* SignupComponent */], },
     { path: 'signin', component: __WEBPACK_IMPORTED_MODULE_2__newlogin_myauth_myauth_component__["a" /* MyauthComponent */] },
-    { path: '**', redirectTo: 'pages' },
+    { path: '**', redirectTo: 'pages', },
 ];
 var config = {
     useHash: true,
@@ -2292,6 +2294,7 @@ var AppComponent = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__newlogin_newlogin_module__ = __webpack_require__("../../../../../src/app/newlogin/newlogin.module.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_account_service__ = __webpack_require__("../../../../../src/app/pages/account.service.ts");
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__globalService__ = __webpack_require__("../../../../../src/app/globalService.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__newlogin_auth_guard__ = __webpack_require__("../../../../../src/app/newlogin/auth.guard.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2303,6 +2306,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
  * Copyright Akveo. All Rights Reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
+
 
 
 
@@ -2335,7 +2339,7 @@ var AppModule = /** @class */ (function () {
             bootstrap: [__WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */]],
             providers: [__WEBPACK_IMPORTED_MODULE_11__pages_account_service__["a" /* AccountService */],
                 { provide: __WEBPACK_IMPORTED_MODULE_0__angular_common__["APP_BASE_HREF"], useValue: '/' },
-                __WEBPACK_IMPORTED_MODULE_12__globalService__["a" /* GlobalService */]
+                __WEBPACK_IMPORTED_MODULE_12__globalService__["a" /* GlobalService */], __WEBPACK_IMPORTED_MODULE_13__newlogin_auth_guard__["a" /* AuthGuard */]
             ],
         })
     ], AppModule);
@@ -2365,31 +2369,22 @@ var GlobalService = /** @class */ (function () {
     function GlobalService() {
         this.isLoggedIn = false;
     }
+    GlobalService.prototype.ngOnInit = function () {
+    };
     GlobalService.prototype.loggedIn = function () {
         this.isLoggedIn = true;
         __WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].pop();
-        __WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].push({
-            title: 'Accounts',
-            icon: 'fa fa-bank',
-            link: '/pages/ui-features',
-            children: [
-                {
-                    title: 'Balance',
-                    link: '/pages/ui-features/tabs',
-                },
-                {
-                    title: 'Payments',
-                    link: '/pages/ui-features/grid',
-                },
-            ],
-        }, {
-            title: 'LOGOUT',
-            icon: 'fa fa-exit',
-            link: '/newlogin/signin',
-        });
+        if (__WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].length <= 0) {
+            __WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].push({
+                title: 'LOGOUT',
+                icon: 'fa fa-exit',
+                link: '/newlogin/signin',
+            });
+        }
     };
     GlobalService.prototype.logOut = function () {
         this.isLoggedIn = false;
+        localStorage.removeItem('token');
         console.log('logged Out');
         __WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].pop();
         __WEBPACK_IMPORTED_MODULE_1__pages_pages_menu__["a" /* MENU_ITEMS */].pop();
@@ -2412,6 +2407,55 @@ var GlobalService = /** @class */ (function () {
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])()
     ], GlobalService);
     return GlobalService;
+}());
+
+
+
+/***/ }),
+
+/***/ "../../../../../src/app/newlogin/auth.guard.ts":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AuthGuard; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__globalService__ = __webpack_require__("../../../../../src/app/globalService.ts");
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+var AuthGuard = /** @class */ (function () {
+    function AuthGuard(api, router) {
+        this.api = api;
+        this.router = router;
+    }
+    AuthGuard.prototype.canActivate = function () {
+        // console.log('AuthGuard#canActivate called');
+        if (localStorage.getItem('token')) {
+            // console.log(localStorage.getItem('token'))
+            this.api.loggedIn();
+            // this.router.navigateByUrl('/pages/ui-features/buttons')
+            return true;
+        }
+        else {
+            console.log("token not found");
+            return true;
+        }
+    };
+    AuthGuard = __decorate([
+        Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_2__globalService__["a" /* GlobalService */], __WEBPACK_IMPORTED_MODULE_1__angular_router__["c" /* Router */]])
+    ], AuthGuard);
+    return AuthGuard;
 }());
 
 
@@ -2612,6 +2656,7 @@ var AwsService = /** @class */ (function () {
                             console.log('got message running it');
                             callback.successMessage = 'User Created. Please verify your email address.';
                             accountService.currentCfoSub = cognitoGetUser.signInUserSession.idToken.payload.sub;
+                            localStorage.setItem('token', accountService.token);
                             api.loggedIn();
                             router.navigate(['pages/ui-features/buttons']);
                         }
@@ -2835,7 +2880,7 @@ var GoogleSigninComponent = /** @class */ (function () {
         this.api = api;
         this.router = router;
         this.clientId = '873878796815-mm6qi366rdhimkbm6a3e0npkehhqjljl.apps.googleusercontent.com';
-        //secret='qZ9ETCODnJ3WCqXGcBaJFELN'
+        this.secret = 'zCwLFi1AviZ8bb9PILfr9sOF';
         // clientId:string = this.awsService.googleId;
         this.scope = [
             'profile',
@@ -2863,13 +2908,16 @@ var GoogleSigninComponent = /** @class */ (function () {
             var profile = googleUser.getBasicProfile();
             //console.log('Token || ' + googleUser.getAuthResponse().id_token);
             var authResponse = googleUser.getAuthResponse();
-            //console.log(authResponse);
+            console.log(authResponse);
             console.log("Authenticated to Google!");
             //console.log('ID: ' + JSON.stringify(profile));
             _this.awsService.authenticateGoogle(authResponse, _this.awsService.region, profile, _this);
             _this.awsService.authenticateGoogle(authResponse, _this.awsService.region, profile, _this);
             //final 
             _this.api.loggedIn();
+            var g = gapi.auth2.getAuthInstance();
+            localStorage.setItem('token', g);
+            console.log(authResponse);
             _this.router.navigate(['pages/ui-features/buttons']).then(function (r) { });
         }, function (error) {
             console.log(JSON.stringify(error, undefined, 2));
@@ -2899,7 +2947,7 @@ var GoogleSigninComponent = /** @class */ (function () {
 /***/ "../../../../../src/app/newlogin/myauth/myauth.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "\n<div class=\"container-fluid scrollable\">\n<div class=\"row\">\n  <div class=\"col-lg-12\">\n    <nb-card size='xxlarge'> \n      <nb-card-body>\n          <div class=\"pull-left\">\n              <button class=\"btn btn-warning btn-sm\" (click)=\"goTo('pages/ui-features/buttons')\">GO back </button>\n            </div>\n        <div  align=\"center\">\n          <br>\n          <br>\n          <br>\n          <h2>Sign In</h2>\n          <h5 *ngIf=\"api.successMessage\">{{api?.successMessage}}</h5>\n          <br>\n          <p>Sign in with your username and password</p>\n          <br>\n        </div>\n        <div align=\"center\">\n          <div class=\"col-sm-4 input-group\">\n            <input type=\"text\" placeholder=\"User Name\" class=\"form-control\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\"  (focus)=\"clearErrors()\"/>\n          </div>\n          <div class=\"col-sm-4 input-group\">\n            <div class=\"item text-danger\">\n              <div class=\"color bg-danger\"></div>\n              <div>\n                {{this.usernameErrMessage}}\n               </div>\n            </div>\n        </div>\n        </div>\n        <br>\n        <div align=\"center\">\n          <div class=\"col-sm-4 input-group\">\n            <input type=\"password\" placeholder=\"Password\" class=\"form-control\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\" (focus)=\"clearErrors()\"/>\n          </div>\n          <div class=\"col-sm-4 input-group\">\n            <div class=\"item text-danger\">\n              <div class=\"color bg-danger\"></div>\n              <div>\n                {{this.passwordErrMessage}}\n               </div>\n            </div>\n        </div>\n        </div>\n        <br>\n        <br>\n        <br>\n       \n        <div align=\"center\">\n         <div class=\"col-md-12\">\n            <button class=\"btn btn-hero-success btn-md\" (click)=\"onLogin()\" type=\"submit\">&nbsp;&nbsp;&nbsp;&nbsp;SIGN IN&nbsp;&nbsp;&nbsp;&nbsp;</button>\n     <br><br>\n        <div>\n          Don't have an account ? <a (click)=\"goSignIn()\">Signup here! </a>\n        </div>\n          </div>\n        </div>\n\n        <div  align=\"center\">\n            <br>\n            <p>Or connect with:</p>\n            <google-signin value=\"google\" (click)=\"clearFields()\"></google-signin>\n            <button class=\"btn btn-sm btn-hero-warning\" (click)=\"subscribeToLogin()\">Sign In With LinkedIn</button>\n            <button class=\"btn btn-sm btn-hero-primary\" style=\"background-color:steelblue\" (click)=\"loginWithFacebook()\">Sign IN With Facebook</button>\n           <hr class=\"divider\">\n            <button class=\"btn   btn-xs small btn-hero-info\" (click)=\"showAdvance = !showAdvance\" >Toggle Advance!</button>\n          </div>\n\n          <div class=\"container\" *ngIf=\"showAdvance\">\n            <h1>new login</h1>\n            \n            <label for=\"userinput\">User Name</label>\n            <input  placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n                    \n            <label for=\"passinput\">Password</label>\n            <input placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n            \n            <button  (click)=\"onLogin()\" type=\"submit\">\n              Login\n            </button>\n            \n              <google-signin value=\"google\" (click)=\"clearFields()\"></google-signin>\n              <button class=\"radio-button\" value=\"cup\" (click)=\"enableFields()\">Cognito User Pools Standalone (JWT)</button>\n              <button class=\"radio-button\" value=\"cip\" (click)=\"enableFields()\">Cognito User Pools with Identity (IAM)</button>\n            \n            \n            </div>\n\n      </nb-card-body>\n    </nb-card>\n\n<br><br><br><br>\n\n\n\n<!--   ////////////////////////////////////////////////////////////////////////  -->\n<!--\n<md-toolbar color=\"accent\">\n  <table cellspacing=\"0\"><tr>\n    <td><a href=\"https://aws.amazon.com/cognito/\" target=\"_blank\"><img title=\"Amazon Cognito\" src=\"../../assets/img/cognito.png\"></a> \n    <a href=\"https://aws.amazon.com/api-gateway/\" target=\"_blank\"><img title=\"Amazon API Gateway\" src=\"../../assets/img/apigw.png\"></a></td>\n  </tr></table>\n  <span>API AuthN/AuthZ Demo</span>\n  <span><img title=\"Amazon Web Services\" src=\"../../assets/img/aws.png\"></span>\n</md-toolbar>\n\n<md-grid-list cols=\"8\" rowHeight=\"20px\" gutterSize=\"1px\">\n  <md-grid-tile colspan=\"3\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_one</i><span> Login with your IdP Credentials </span></md-grid-tile>\n  <md-grid-tile colspan=\"2\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_two</i><span> Retrieve User Info </span></md-grid-tile>\n  <md-grid-tile colspan=\"1\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_3</i><span> Test Access </span></md-grid-tile>\n  <md-grid-tile colspan=\"2\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_4</i><span> Verify Auth Results </span></md-grid-tile>\n</md-grid-list>\n<md-grid-list cols=\"8\" rowHeight=\"375px\" gutterSize=\"1px\">\n  <md-grid-tile id=\"login\" colspan=\"3\" rowspan=\"1\" >\n    <div class=\"container\">  \n        <md-card class=\"card-container\">\n          <md-card-header></md-card-header>\n          <md-card-content >\n            <form method=\"POST\">\n            <div *ngIf=\"!disableInput; else disabled\">\n              <md-input-container class=\"full-width\">\n                <label for=\"userinput\">User Name</label>\n                <input mdInput id=\"userinput\" placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n              </md-input-container>\n              <br>\n              <md-input-container class=\"full-width\">\n                <label for=\"passinput\">Password</label>\n                <input mdInput id=\"passinput\" placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n              </md-input-container>\n            </div>\n            <md-radio-group class=\"radio-group\" [(ngModel)]=\"chosenProvider\" [ngModelOptions]=\"{standalone: true}\">\n              <google-signin value=\"google\" (click)=\"clearFields($event)\"></google-signin>\n              <md-radio-button class=\"radio-button\" value=\"cup\" (click)=\"enableFields($event)\">Cognito User Pools Standalone (JWT)</md-radio-button>\n              <md-radio-button class=\"radio-button\" value=\"cip\" (click)=\"enableFields($event)\">Cognito User Pools with Identity (IAM)</md-radio-button>\n            </md-radio-group>\n          </form>\n          </md-card-content>\n          <md-card-actions>\n              <button md-raised-button color=\"accent\" (click)=\"onLogin($event)\" type=\"submit\">\n                Login\n              </button>\n          </md-card-actions>\n        </md-card>\n    <br>\n    <div *ngIf=\"errorMessage!=null; else blank\">\n      <div class=\"error\">\n      <md-chip-list color=\"warn\" disabled>\n        <md-chip class=\"error\" color=\"warn\" disabled>\n            <strong>{{errorMessage}}</strong>\n        </md-chip>\n      </md-chip-list>\n      </div>\n    </div>\n    </div>\n  </md-grid-tile>\n\n  <md-grid-tile id=\"userDetails\" colspan=\"2\" rowspan=\"1\">    \n    <div *ngIf=\"provider!=null; else notLoggedIn\" class=\"container\">\n        <md-card class=\"card-container\">\n          <md-card-header>\n            <div md-card-avatar class=\"card-header-image\"></div>\n            <md-card-title>\n              <strong class=\"card-header-title\">Authenticated with {{provider}}</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Powered by Amazon Cognito and Amazon API Gateway</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n          <md-card-content>\n            <br>\n            <div *ngIf=\"googleConfirmed=='confirmed'\">\n              <div *ngIf=\"googleUser==null; else googleUserData\">\n              <br>\n              <button md-raised-button color=\"warn\" (click)=\"userDataFromGoogle($event)\" type=\"submit\">\n                Retrieve User Info\n              </button>\n              </div>\n            </div>\n            <div *ngIf=\"googleConfirmed==null && user!=null\">\n              <div>\n                <md-chip-list>\n                <md-chip>\n                  <br>\n                  <br>\n                  <strong>{{user.name}} {{user.surname}}</strong><br>\n                  <small><strong>Email: </strong></small><span>{{user.email}}</span><br>\n                  <small><strong>Id: </strong></small><span><small><font color=\"blue\">{{user.userId}}</font></small></span><br>\n                  <br>\n                  <br>\n                  <br>\n                </md-chip>\n                </md-chip-list>\n              </div>\n            </div>\n          </md-card-content>\n        </md-card>\n    </div>\n    \n  </md-grid-tile>\n  <md-grid-tile id=\"buttons\" colspan=\"1\" rowspan=\"1\" >\n    <div class=\"container\">\n    <md-card class=\"card-container\">\n          <md-card-header>\n            <md-card-title>\n              <strong class=\"card-header-title\">API Resources</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Endpoint Paths</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n      <md-card-content>\n        <div *ngIf=\"provider!=null; else disableTests\">\n        <div class=\"center\">\n          <button md-fab (click)=\"testGoogle($event)\" type=\"submit\">/google</button><br><br>\n          <button md-fab (click)=\"testUserPools($event)\" type=\"submit\">/cup</button><br><br>\n          <button md-fab (click)=\"testIdentityPools($event)\" type=\"submit\">/cip</button>\n        </div>\n        </div>\n      </md-card-content>\n    </md-card>\n  </div>\n  </md-grid-tile>\n\n  <md-grid-tile id=\"semaphore\" colspan=\"2\" rowspan=\"1\">\n    <div class=\"container\">\n    <md-card class=\"card-container\">\n        <md-card-header>\n          <div class=\"center\">\n            <md-card-title>\n                <span><strong><font color=\"green\">Green: </font> Good!</strong> <i class=\"material-icons\">thumb_up</i></span>\n                <span><strong><font color=\"red\">Red: </font> Bad!</strong> <i class=\"material-icons\">thumb_down</i></span> \n                <br>\n                <br>\n            </md-card-title>\n            </div>\n        </md-card-header>\n        <hr>\n        <md-card-content> \n        <div class=\"center\">\n          <br>\n          <br>\n              <div class=\"center\">\n                <table class=\"table\">\n                  <tr class=\"card-background\">\n                  <td>\n                    <div *ngIf=\"success; else grayCircle\">\n                      <figure class=\"green-circle\"></figure>\n                    </div>\n                  </td>                    \n                  <td>\n                    <div *ngIf=\"redError!=null; else grayCircle\">\n                      <figure class=\"red-circle\"></figure>\n                    </div>\n                  </td>\n                  </tr>\n                </table>\n                <div *ngIf=\"redError; else br\">\n                <md-chip-list color=\"warn\" disabled>\n                  <md-chip class=\"error\" color=\"warn\" disabled>\n                      <strong>{{redError}}</strong>\n                  </md-chip>\n                </md-chip-list>\n                </div>\n                <div *ngIf=\"success; else br\">\n                <md-chip-list color=\"warn\" disabled>\n                  <md-chip class=\"error\" color=\"warn\" disabled>\n                      <strong>{{success}}</strong>\n                  </md-chip>\n                </md-chip-list>\n                </div>\n              </div>\n        </div>\n      </md-card-content>\n    </md-card>\n    </div>\n  </md-grid-tile>\n</md-grid-list>\n\n  <ng-template #blank></ng-template>\n\n  <ng-template #disabled>\n  -->\n\n  <!--\n  <md-input-container class=\"full-width\">\n    <font color=\"gray\">User Name (Disabled for Google Login)</font>\n    <input mdInput disabled id=\"userinput\" placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n  </md-input-container>\n  <br>\n  <md-input-container class=\"full-width\">\n    <font color=\"gray\">Password (Disabled for Google Login)</font>\n    <input mdInput disabled id=\"passinput\" placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n  </md-input-container>\n  -->\n  <!--\n  <div class=\"center\">\n    <img title=\"Google Plus Sign In\" src=\"../../assets/img/googleplus.png\" width=\"125\" height=\"125\">\n  </div>\n</ng-template>\n\n  <ng-template #notLoggedIn>\n    <div class=\"container\" >\n        <md-card class=\"card-container\">\n          <md-card-header md-colors=\"accent\">\n            <div md-card-avatar class=\"card-header-image\"></div>\n            <md-card-title>\n              <strong class=\"card-header-title\">Not Authenticated</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Powered by Amazon Cognito and Amazon API Gateway</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n          <md-card-content>\n            <br>\n            <br>\n            <br>\n            <div class=\"card-content\">\n              <md-chip-list>\n                <md-chip>Chose your Provider on the Left and Sign In to retrieve information about the User</md-chip>\n              </md-chip-list>\n            </div>\n            <br>\n            <br>\n            <br>\n            <br>\n            <br>\n            <br>\n          </md-card-content>\n        </md-card>\n      </div>\n  </ng-template>\n\n  <ng-template #googleUserData>  \n    <div>\n      <md-chip-list>\n       <md-chip>\n        <br>\n        <br>\n        <strong>{{googleUser.name}} {{googleUser.surname}}</strong><br>\n        <small><strong>Email: </strong></small><span>{{googleUser.email}}</span><br>\n        <small><strong>Id: </strong></small><span><small><font color=\"blue\">{{googleUser.userId}}</font></small></span><br>\n        <br>\n        <br>\n        <br>\n        </md-chip>\n      </md-chip-list>\n    </div>\n\n  </ng-template>\n\n  <ng-template #disableTests>\n    <div class=\"center\">\n          <button md-fab disabled type=\"submit\">/google</button><br><br>\n          <button md-fab disabled type=\"submit\">/cup</button><br><br>\n          <button md-fab disabled type=\"submit\">/cip</button>\n        </div>\n  </ng-template>\n\n  <ng-template #grayCircle>\n    <figure class=\"circle\"></figure>\n  </ng-template>\n\n  <ng-template #br>\n  </ng-template>\n\n-->\n\n\n\n\n\n<br><br>\n<br><br>\n<br><br>\n<br><br>\n<br><br>\n\n</div>"
+module.exports = "\n<div class=\"container-fluid scrollable\">\n<div class=\"row\">\n  <div class=\"col-lg-12\">\n    <nb-card size='xxlarge'> \n      <nb-card-body>\n          <div class=\"pull-left\">\n              <button class=\"btn btn-warning btn-sm\" (click)=\"goTo('pages/ui-features/buttons')\">GO back </button>\n            </div>\n        <div  align=\"center\">\n          <br>\n          <br>\n          <br>\n          <h2>Sign In</h2>\n          <h5 *ngIf=\"api.successMessage\">{{api?.successMessage}}</h5>\n          <br>\n          <p>Sign in with your username and password</p>\n          <br>\n        </div>\n        <div align=\"center\">\n          <div class=\"col-sm-4 input-group\">\n            <input type=\"text\" placeholder=\"User Name\" class=\"form-control\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\"  (focus)=\"clearErrors()\"/>\n          </div>\n          <div class=\"col-sm-4 input-group\">\n            <div class=\"item text-danger\">\n              <div class=\"color bg-danger\"></div>\n              <div>\n                {{this.usernameErrMessage}}\n               </div>\n            </div>\n        </div>\n        </div>\n        <br>\n        <div align=\"center\">\n          <div class=\"col-sm-4 input-group\">\n            <input type=\"password\" placeholder=\"Password\" class=\"form-control\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\" (focus)=\"clearErrors()\"/>\n          </div>\n          <div class=\"col-sm-4 input-group\">\n            <div class=\"item text-danger\">\n              <div class=\"color bg-danger\"></div>\n              <div>\n                {{this.passwordErrMessage}}\n               </div>\n            </div>\n        </div>\n        </div>\n        <br>\n        <br>\n        <br>\n       \n        <div align=\"center\">\n         <div class=\"col-md-12\">\n            <button class=\"btn btn-hero-success btn-md\" (click)=\"onLogin()\" type=\"submit\">&nbsp;&nbsp;&nbsp;&nbsp;SIGN IN&nbsp;&nbsp;&nbsp;&nbsp;</button>\n     <br><br>\n        <div>\n          Don't have an account ? <a (click)=\"goSignIn()\">Signup here! </a>\n        </div>\n          </div>\n        </div>\n\n        <div  align=\"center\">\n            <br>\n            <p>Or connect with:</p>\n            <google-signin value=\"google\" (click)=\"clearFields()\"></google-signin>\n            <button class=\"btn btn-sm btn-hero-warning\" (click)=\"subscribeToLogin()\">Sign In With LinkedIn</button>\n            <button class=\"btn btn-sm btn-hero-primary\" style=\"background-color:steelblue\" (click)=\"loginWithFacebook()\">Sign IN With Facebook</button>\n           <hr class=\"divider\">\n            <button class=\"btn   btn-xs small btn-hero-info\" (click)=\"showAdvance = !showAdvance\" >Toggle Advance!</button>\n          </div>\n\n          <div class=\"container\" *ngIf=\"showAdvance\">\n            <h1>new login</h1>\n            \n            <label for=\"userinput\">User Name</label>\n            <input  placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n                    \n            <label for=\"passinput\">Password</label>\n            <input placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n            \n            <button  (click)=\"onLogin()\" type=\"submit\">\n              Login\n            </button>\n            \n              <google-signin value=\"google\" (click)=\"clearFields()\"></google-signin>\n              <button class=\"radio-button\" value=\"cup\" (click)=\"enableFields()\">Cognito User Pools Standalone (JWT)</button>\n              <button class=\"radio-button\" value=\"cip\" (click)=\"enableFields()\">Cognito User Pools with Identity (IAM)</button>\n            </div>\n\n      </nb-card-body>\n    </nb-card>\n\n<br><br><br><br>\n\n\n\n<!--   ////////////////////////////////////////////////////////////////////////  -->\n<!--\n<md-toolbar color=\"accent\">\n  <table cellspacing=\"0\"><tr>\n    <td><a href=\"https://aws.amazon.com/cognito/\" target=\"_blank\"><img title=\"Amazon Cognito\" src=\"../../assets/img/cognito.png\"></a> \n    <a href=\"https://aws.amazon.com/api-gateway/\" target=\"_blank\"><img title=\"Amazon API Gateway\" src=\"../../assets/img/apigw.png\"></a></td>\n  </tr></table>\n  <span>API AuthN/AuthZ Demo</span>\n  <span><img title=\"Amazon Web Services\" src=\"../../assets/img/aws.png\"></span>\n</md-toolbar>\n\n<md-grid-list cols=\"8\" rowHeight=\"20px\" gutterSize=\"1px\">\n  <md-grid-tile colspan=\"3\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_one</i><span> Login with your IdP Credentials </span></md-grid-tile>\n  <md-grid-tile colspan=\"2\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_two</i><span> Retrieve User Info </span></md-grid-tile>\n  <md-grid-tile colspan=\"1\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_3</i><span> Test Access </span></md-grid-tile>\n  <md-grid-tile colspan=\"2\" rowspan=\"1\" rowHeight=\"20px\" class=\"center\"><i class=\"material-icons\">looks_4</i><span> Verify Auth Results </span></md-grid-tile>\n</md-grid-list>\n<md-grid-list cols=\"8\" rowHeight=\"375px\" gutterSize=\"1px\">\n  <md-grid-tile id=\"login\" colspan=\"3\" rowspan=\"1\" >\n    <div class=\"container\">  \n        <md-card class=\"card-container\">\n          <md-card-header></md-card-header>\n          <md-card-content >\n            <form method=\"POST\">\n            <div *ngIf=\"!disableInput; else disabled\">\n              <md-input-container class=\"full-width\">\n                <label for=\"userinput\">User Name</label>\n                <input mdInput id=\"userinput\" placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n              </md-input-container>\n              <br>\n              <md-input-container class=\"full-width\">\n                <label for=\"passinput\">Password</label>\n                <input mdInput id=\"passinput\" placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n              </md-input-container>\n            </div>\n            <md-radio-group class=\"radio-group\" [(ngModel)]=\"chosenProvider\" [ngModelOptions]=\"{standalone: true}\">\n              <google-signin value=\"google\" (click)=\"clearFields($event)\"></google-signin>\n              <md-radio-button class=\"radio-button\" value=\"cup\" (click)=\"enableFields($event)\">Cognito User Pools Standalone (JWT)</md-radio-button>\n              <md-radio-button class=\"radio-button\" value=\"cip\" (click)=\"enableFields($event)\">Cognito User Pools with Identity (IAM)</md-radio-button>\n            </md-radio-group>\n          </form>\n          </md-card-content>\n          <md-card-actions>\n              <button md-raised-button color=\"accent\" (click)=\"onLogin($event)\" type=\"submit\">\n                Login\n              </button>\n          </md-card-actions>\n        </md-card>\n    <br>\n    <div *ngIf=\"errorMessage!=null; else blank\">\n      <div class=\"error\">\n      <md-chip-list color=\"warn\" disabled>\n        <md-chip class=\"error\" color=\"warn\" disabled>\n            <strong>{{errorMessage}}</strong>\n        </md-chip>\n      </md-chip-list>\n      </div>\n    </div>\n    </div>\n  </md-grid-tile>\n\n  <md-grid-tile id=\"userDetails\" colspan=\"2\" rowspan=\"1\">    \n    <div *ngIf=\"provider!=null; else notLoggedIn\" class=\"container\">\n        <md-card class=\"card-container\">\n          <md-card-header>\n            <div md-card-avatar class=\"card-header-image\"></div>\n            <md-card-title>\n              <strong class=\"card-header-title\">Authenticated with {{provider}}</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Powered by Amazon Cognito and Amazon API Gateway</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n          <md-card-content>\n            <br>\n            <div *ngIf=\"googleConfirmed=='confirmed'\">\n              <div *ngIf=\"googleUser==null; else googleUserData\">\n              <br>\n              <button md-raised-button color=\"warn\" (click)=\"userDataFromGoogle($event)\" type=\"submit\">\n                Retrieve User Info\n              </button>\n              </div>\n            </div>\n            <div *ngIf=\"googleConfirmed==null && user!=null\">\n              <div>\n                <md-chip-list>\n                <md-chip>\n                  <br>\n                  <br>\n                  <strong>{{user.name}} {{user.surname}}</strong><br>\n                  <small><strong>Email: </strong></small><span>{{user.email}}</span><br>\n                  <small><strong>Id: </strong></small><span><small><font color=\"blue\">{{user.userId}}</font></small></span><br>\n                  <br>\n                  <br>\n                  <br>\n                </md-chip>\n                </md-chip-list>\n              </div>\n            </div>\n          </md-card-content>\n        </md-card>\n    </div>\n    \n  </md-grid-tile>\n  <md-grid-tile id=\"buttons\" colspan=\"1\" rowspan=\"1\" >\n    <div class=\"container\">\n    <md-card class=\"card-container\">\n          <md-card-header>\n            <md-card-title>\n              <strong class=\"card-header-title\">API Resources</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Endpoint Paths</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n      <md-card-content>\n        <div *ngIf=\"provider!=null; else disableTests\">\n        <div class=\"center\">\n          <button md-fab (click)=\"testGoogle($event)\" type=\"submit\">/google</button><br><br>\n          <button md-fab (click)=\"testUserPools($event)\" type=\"submit\">/cup</button><br><br>\n          <button md-fab (click)=\"testIdentityPools($event)\" type=\"submit\">/cip</button>\n        </div>\n        </div>\n      </md-card-content>\n    </md-card>\n  </div>\n  </md-grid-tile>\n\n  <md-grid-tile id=\"semaphore\" colspan=\"2\" rowspan=\"1\">\n    <div class=\"container\">\n    <md-card class=\"card-container\">\n        <md-card-header>\n          <div class=\"center\">\n            <md-card-title>\n                <span><strong><font color=\"green\">Green: </font> Good!</strong> <i class=\"material-icons\">thumb_up</i></span>\n                <span><strong><font color=\"red\">Red: </font> Bad!</strong> <i class=\"material-icons\">thumb_down</i></span> \n                <br>\n                <br>\n            </md-card-title>\n            </div>\n        </md-card-header>\n        <hr>\n        <md-card-content> \n        <div class=\"center\">\n          <br>\n          <br>\n              <div class=\"center\">\n                <table class=\"table\">\n                  <tr class=\"card-background\">\n                  <td>\n                    <div *ngIf=\"success; else grayCircle\">\n                      <figure class=\"green-circle\"></figure>\n                    </div>\n                  </td>                    \n                  <td>\n                    <div *ngIf=\"redError!=null; else grayCircle\">\n                      <figure class=\"red-circle\"></figure>\n                    </div>\n                  </td>\n                  </tr>\n                </table>\n                <div *ngIf=\"redError; else br\">\n                <md-chip-list color=\"warn\" disabled>\n                  <md-chip class=\"error\" color=\"warn\" disabled>\n                      <strong>{{redError}}</strong>\n                  </md-chip>\n                </md-chip-list>\n                </div>\n                <div *ngIf=\"success; else br\">\n                <md-chip-list color=\"warn\" disabled>\n                  <md-chip class=\"error\" color=\"warn\" disabled>\n                      <strong>{{success}}</strong>\n                  </md-chip>\n                </md-chip-list>\n                </div>\n              </div>\n        </div>\n      </md-card-content>\n    </md-card>\n    </div>\n  </md-grid-tile>\n</md-grid-list>\n\n  <ng-template #blank></ng-template>\n\n  <ng-template #disabled>\n  -->\n\n  <!--\n  <md-input-container class=\"full-width\">\n    <font color=\"gray\">User Name (Disabled for Google Login)</font>\n    <input mdInput disabled id=\"userinput\" placehoder=\"User Name\" type=\"text\" [(ngModel)]=\"username\" [ngModelOptions]=\"{standalone: true}\">\n  </md-input-container>\n  <br>\n  <md-input-container class=\"full-width\">\n    <font color=\"gray\">Password (Disabled for Google Login)</font>\n    <input mdInput disabled id=\"passinput\" placehoder=\"Password\" type=\"password\" required [(ngModel)]=\"password\" [ngModelOptions]=\"{standalone: true}\">\n  </md-input-container>\n  -->\n  <!--\n  <div class=\"center\">\n    <img title=\"Google Plus Sign In\" src=\"../../assets/img/googleplus.png\" width=\"125\" height=\"125\">\n  </div>\n</ng-template>\n\n  <ng-template #notLoggedIn>\n    <div class=\"container\" >\n        <md-card class=\"card-container\">\n          <md-card-header md-colors=\"accent\">\n            <div md-card-avatar class=\"card-header-image\"></div>\n            <md-card-title>\n              <strong class=\"card-header-title\">Not Authenticated</strong>\n            </md-card-title>\n            <md-card-subtitle>\n              <small> Powered by Amazon Cognito and Amazon API Gateway</small>\n            </md-card-subtitle>\n          </md-card-header>\n          <hr>\n          <md-card-content>\n            <br>\n            <br>\n            <br>\n            <div class=\"card-content\">\n              <md-chip-list>\n                <md-chip>Chose your Provider on the Left and Sign In to retrieve information about the User</md-chip>\n              </md-chip-list>\n            </div>\n            <br>\n            <br>\n            <br>\n            <br>\n            <br>\n            <br>\n          </md-card-content>\n        </md-card>\n      </div>\n  </ng-template>\n\n  <ng-template #googleUserData>  \n    <div>\n      <md-chip-list>\n       <md-chip>\n        <br>\n        <br>\n        <strong>{{googleUser.name}} {{googleUser.surname}}</strong><br>\n        <small><strong>Email: </strong></small><span>{{googleUser.email}}</span><br>\n        <small><strong>Id: </strong></small><span><small><font color=\"blue\">{{googleUser.userId}}</font></small></span><br>\n        <br>\n        <br>\n        <br>\n        </md-chip>\n      </md-chip-list>\n    </div>\n\n  </ng-template>\n\n  <ng-template #disableTests>\n    <div class=\"center\">\n          <button md-fab disabled type=\"submit\">/google</button><br><br>\n          <button md-fab disabled type=\"submit\">/cup</button><br><br>\n          <button md-fab disabled type=\"submit\">/cip</button>\n        </div>\n  </ng-template>\n\n  <ng-template #grayCircle>\n    <figure class=\"circle\"></figure>\n  </ng-template>\n\n  <ng-template #br>\n  </ng-template>\n\n-->\n\n\n\n\n\n<br><br>\n<br><br>\n<br><br>\n<br><br>\n<br><br>\n\n</div>"
 
 /***/ }),
 
@@ -3000,6 +3048,8 @@ var MyauthComponent = /** @class */ (function () {
         var _this = this;
         this.fb.login()
             .then(function (response) {
+            console.log(response);
+            localStorage.setItem('token', response.authResponse.accessToken);
             _this.api.isLoggedIn = true;
             console.log(response);
             _this.api.loggedIn();
@@ -3175,6 +3225,8 @@ var MyauthComponent = /** @class */ (function () {
             complete: function () {
                 // Completed
                 console.log('complete');
+                localStorage.setItem('token', 'linkedIn');
+                console.log(localStorage.getItem('token'));
                 _this.api.loggedIn();
                 _this.router.navigate(['pages/ui-features/buttons']);
             }
